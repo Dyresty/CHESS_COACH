@@ -96,8 +96,12 @@ export interface Mistake {
 export interface Settings {
   username: string
   timeClass: string
+  /** Blunder guard in Second Chance, plus the before-you-move reminder. */
   safetyCheck: boolean
   newPerDay: number
+  botLevel?: 'easy' | 'medium' | 'hard'
+  /** Set once the How it works guide has been shown. */
+  seenGuide?: boolean
 }
 
 export interface State {

@@ -72,9 +72,9 @@ export default function Settings() {
       <Rule />
       <Row style={{ justifyContent: 'space-between' }}>
         <View style={{ flex: 1, gap: 2 }}>
-          <T weight="medium">Safety check before each move</T>
+          <T weight="medium">Blunder guard</T>
           <T size={14} tone="soft">
-            Three questions before you can move in drills and Second Chance games.
+            In Second Chance games, warns you before a move that loses material and lets you take it back. Also shows the before-you-move checks.
           </T>
         </View>
         <Switch value={settings.safetyCheck} onValueChange={(v) => update({ safetyCheck: v })} trackColor={{ true: p.good, false: p.rule }} thumbColor={p.sheet} />
@@ -97,6 +97,7 @@ export default function Settings() {
       </Row>
 
       <Rule />
+      <Button kind="secondary" label="How the app works" onPress={() => router.push('/guide')} />
       <Button
         kind="quiet"
         danger

@@ -7,7 +7,7 @@ import { PATTERNS } from '../../../core/patterns'
 import { Rating } from '../../../core/srs'
 import type { Score } from '../../../core/types'
 import { negate, winChance } from '../../../core/winprob'
-import { SafetyCheck } from '../components/SafetyCheck'
+import { BeforeYouMove } from '../components/BeforeYouMove'
 import { engine } from '../engine/engine'
 import { gradeMistake } from '../lib/grade'
 import { takeDrillQueue } from '../lib/handoff'
@@ -17,7 +17,7 @@ import { Button, Mark, Note, Row, T } from '../ui/kit'
 import { Screen } from '../ui/Screen'
 import { space, usePalette } from '../ui/theme'
 
-type Phase = 'check' | 'solve' | 'checking' | 'hint' | 'solved' | 'revealed'
+type Phase = 'solve' | 'checking' | 'hint' | 'solved' | 'revealed'
 
 /** Accept any move that keeps nearly all of the best move's winning chances. */
 const TOLERANCE = 0.05
@@ -31,7 +31,7 @@ export default function Drill() {
   const [queue] = useState(takeDrillQueue)
   const safetyCheck = useStore((s) => s.settings.safetyCheck)
   const [index, setIndex] = useState(0)
-  const [phase, setPhase] = useState<Phase>(safetyCheck ? 'check' : 'solve')
+  const [phase, setPhase] = useState<Phase>('solve')
   const [best, setBest] = useState<{ fen: string; score: Score } | null>(null)
   const [tried, setTried] = useState<string | null>(null)
   const [solvedWith, setSolvedWith] = useState<string | null>(null)
@@ -105,7 +105,7 @@ export default function Drill() {
     setIndex((i) => i + 1)
     setTried(null)
     setSolvedWith(null)
-    setPhase(safetyCheck ? 'check' : 'solve')
+    setPhase('solve')
   }
 
   const lastMove = m.lastMove ? [m.lastMove.slice(0, 2), m.lastMove.slice(2, 4)] : []
@@ -144,11 +144,11 @@ export default function Drill() {
         orientation={m.userColor}
         onMove={(uci) => void onMove(uci)}
         disabled={phase !== 'solve' && phase !== 'hint'}
-        highlight={phase === 'check' || phase === 'hint' ? lastMove : []}
+        highlight={phase === 'solve' || phase === 'hint' ? lastMove : []}
         arrows={done ? [{ from: m.bestUci.slice(0, 2), to: m.bestUci.slice(2, 4), color: p.good }] : []}
       />
 
-      {phase === 'check' && <SafetyCheck lastMoveSan={m.lastMoveSan} onDone={() => setPhase('solve')} />}
+      {phase === 'solve' && safetyCheck && <BeforeYouMove lastMoveSan={m.lastMoveSan} />}
       {phase === 'checking' && <T tone="soft">Checking your move…</T>}
       {phase === 'hint' && (
         <Note tone="mistake">

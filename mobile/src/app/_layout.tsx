@@ -41,6 +41,7 @@ export default function RootLayout() {
             <Stack.Screen name="play" />
             <Stack.Screen name="game/[id]" />
             <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="guide" />
           </Stack>
         )}
       </View>

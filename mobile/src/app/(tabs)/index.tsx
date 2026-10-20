@@ -1,5 +1,5 @@
 import { router } from 'expo-router'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Pressable, TextInput, View } from 'react-native'
 import { PATTERNS } from '../../../../core/patterns'
 import { buildSafetyQuiz, buildSession, weaknessRanking } from '../../../../core/session'
@@ -27,6 +27,12 @@ export default function Today() {
   const days = streak(state.activity)
   const gameCount = Object.keys(games).length
   const next = session[0]
+  // People who set up before the guide existed see it once.
+  useEffect(() => {
+    if (!settings.username || settings.seenGuide) return
+    setState((s) => ({ ...s, settings: { ...s.settings, seenGuide: true } }))
+    router.push('/guide')
+  }, [settings.username, settings.seenGuide])
   const kicker = `${DAYS[opened.getDay()]}${days ? ` · ${days} day streak` : ''}`
 
   if (!settings.username) {
@@ -49,7 +55,10 @@ export default function Today() {
             placeholderTextColor={p.inkSoft}
             style={{ borderWidth: 1.5, borderColor: p.ink, borderRadius: radius, padding: space.m, fontFamily: font.text, fontSize: 17, color: p.ink }}
           />
-          <Button label="Continue" disabled={!name.trim()} onPress={() => setState((s) => ({ ...s, settings: { ...s.settings, username: name.trim() } }))} />
+          <Button label="Continue" disabled={!name.trim()} onPress={() => {
+              setState((s) => ({ ...s, settings: { ...s.settings, username: name.trim(), seenGuide: true } }))
+              router.push('/guide')
+            }} />
         </View>
       </Screen>
     )
@@ -59,11 +68,18 @@ export default function Today() {
     <Screen>
       <Row style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Title kicker={kicker}>{session.length ? `${session.length} positions today` : gameCount ? 'All caught up' : 'Let’s read your games'}</Title>
-        <Pressable onPress={() => router.push('/settings')} hitSlop={12} accessibilityRole="button">
-          <T size={14} weight="medium" tone="soft">
-            Settings
-          </T>
-        </Pressable>
+        <Row style={{ gap: space.m }}>
+          <Pressable onPress={() => router.push('/guide')} hitSlop={12} accessibilityRole="button">
+            <T size={14} weight="medium" tone="soft">
+              Guide
+            </T>
+          </Pressable>
+          <Pressable onPress={() => router.push('/settings')} hitSlop={12} accessibilityRole="button">
+            <T size={14} weight="medium" tone="soft">
+              Settings
+            </T>
+          </Pressable>
+        </Row>
       </Row>
 
       {next ? (
