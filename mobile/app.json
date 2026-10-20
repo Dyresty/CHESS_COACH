@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Chess Coach",
+    "slug": "chess-coach",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.dyresty.chesscoach"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F2ECE1",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.dyresty.chesscoach"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "chesscoach",
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

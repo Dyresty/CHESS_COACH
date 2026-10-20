@@ -1,5 +1,5 @@
-import { SearchParser } from './uci'
-import type { EvalOptions, EvalResult, Score } from './types'
+import { SearchParser } from '../../core/uci'
+import type { EvalOptions, EvalResult, Score } from '../../core/types'
 
 const ENGINE_URL = `${import.meta.env.BASE_URL}engine/stockfish-19-lite-single.js`
 

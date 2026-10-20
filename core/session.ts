@@ -1,7 +1,6 @@
 import { isDue } from './srs'
-import type { State } from './store'
-import { today } from './store'
-import type { GameSummary, Mistake, PatternTag } from './types'
+import { today } from './state'
+import type { GameSummary, Mistake, PatternTag, SafetyItem, State } from './types'
 
 /** Pattern counts across the most recent games, biggest first, ignoring the catch-all tag. */
 export function weaknessRanking(games: GameSummary[], recent = 20): { tag: PatternTag; count: number; perGame: number }[] {
@@ -32,4 +31,36 @@ export function buildSession(state: State, now = new Date()): Mistake[] {
   function score(m: Mistake) {
     return (m.tag === focus ? 2 : 0) + (m.severity === 'blunder' ? 1 : 0) + m.createdAt / 1e15
   }
+}
+
+export interface SafetyQuestion extends SafetyItem {
+  id: string
+  safe: boolean
+  /** Set for unsafe moves: the mistake this came from. */
+  mistake?: Mistake
+}
+
+const UNSAFE_TAGS = new Set<PatternTag>(['hung-piece', 'missed-threat', 'allowed-mate'])
+
+/** A shuffled mix of your real blunders and your real good moves, about half each. */
+export function buildSafetyQuiz(state: State, size = 10, random = Math.random): SafetyQuestion[] {
+  const unsafe: SafetyQuestion[] = Object.values(state.mistakes)
+    .filter((m) => UNSAFE_TAGS.has(m.tag))
+    .map((m) => ({ id: `u:${m.id}`, fen: m.fen, uci: m.playedUci, san: m.played, moveNumber: m.moveNumber, safe: false, mistake: m }))
+  const safe: SafetyQuestion[] = Object.values(state.games).flatMap((g) =>
+    (g.safeMoves ?? []).map((s, i) => ({ ...s, id: `s:${g.id}:${i}`, safe: true })),
+  )
+  const pick = (list: SafetyQuestion[], n: number) => shuffle(list, random).slice(0, n)
+  const half = Math.ceil(size / 2)
+  const chosen = [...pick(unsafe, half), ...pick(safe, size - Math.min(half, unsafe.length))]
+  return shuffle(chosen, random).slice(0, size)
+}
+
+function shuffle<T>(list: T[], random: () => number): T[] {
+  const out = [...list]
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1))
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
 }

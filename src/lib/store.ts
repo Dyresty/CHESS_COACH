@@ -1,30 +1,11 @@
 import { useSyncExternalStore } from 'react'
-import { reviveCard } from './srs'
-import type { GameSummary, Mistake } from './types'
+import { reviveCard } from '../../core/srs'
+import { initialState as initial } from '../../core/state'
+import type { State } from '../../core/types'
 
 const KEY = 'chess-coach:v1'
 
-export interface Settings {
-  username: string
-  timeClass: string
-  safetyCheck: boolean
-  newPerDay: number
-}
-
-export interface State {
-  settings: Settings
-  games: Record<string, GameSummary>
-  mistakes: Record<string, Mistake>
-  /** yyyy-mm-dd -> number of new mistakes introduced that day */
-  newIntroduced: Record<string, number>
-}
-
-const initial: State = {
-  settings: { username: '', timeClass: 'rapid', safetyCheck: true, newPerDay: 10 },
-  games: {},
-  mistakes: {},
-  newIntroduced: {},
-}
+export type { Settings, State } from '../../core/types'
 
 function load(): State {
   try {
@@ -65,9 +46,7 @@ export function useStore<T>(select: (s: State) => T): T {
   )
 }
 
-export function today(): string {
-  return new Date().toISOString().slice(0, 10)
-}
+export { today } from '../../core/state'
 
 export function resetAll() {
   setState(() => initial)

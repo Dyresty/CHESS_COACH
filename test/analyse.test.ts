@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import { analyseGame } from '../src/lib/analyse'
-import type { Color, ImportedGame } from '../src/lib/types'
+import { analyseGame } from '../core/analyse'
+import type { Color, ImportedGame } from '../core/types'
 import { createNodeEngine } from './nodeEngine'
 
 const engine = createNodeEngine()

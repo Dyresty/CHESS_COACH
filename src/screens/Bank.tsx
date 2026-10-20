@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
-import { PATTERNS } from '../lib/patterns'
-import { isRetired } from '../lib/srs'
+import { PATTERNS } from '../../core/patterns'
+import { isRetired } from '../../core/srs'
 import { useStore } from '../lib/store'
-import type { Mistake, PatternTag } from '../lib/types'
+import type { Mistake, PatternTag } from '../../core/types'
 
 export function Bank({ onDrill }: { onDrill: (queue: Mistake[]) => void }) {
   const mistakes = useStore((s) => s.mistakes)

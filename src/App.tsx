@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Mistake } from './lib/types'
+import type { Mistake } from '../core/types'
 import { Bank } from './screens/Bank'
 import { Drill } from './screens/Drill'
 import { Play } from './screens/Play'

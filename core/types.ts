@@ -42,9 +42,22 @@ export interface ImportedGame {
   userRating?: number
 }
 
+/** A move from your own games, for the "Safe or not?" drill. */
+export interface SafetyItem {
+  fen: string
+  uci: string
+  san: string
+  moveNumber: number
+}
+
 export interface GameSummary {
   id: string
   url: string
+  pgn?: string
+  /** Your winning chances after each ply, 0 to 100, for the game graph. */
+  curve?: number[]
+  /** A few of your good moves from this game, used as the "safe" answers. */
+  safeMoves?: SafetyItem[]
   endTime: number
   opponent: string
   result: 'win' | 'loss' | 'draw'
@@ -78,4 +91,21 @@ export interface Mistake {
   tag: PatternTag
   card: Card
   createdAt: number
+}
+
+export interface Settings {
+  username: string
+  timeClass: string
+  safetyCheck: boolean
+  newPerDay: number
+}
+
+export interface State {
+  settings: Settings
+  games: Record<string, GameSummary>
+  mistakes: Record<string, Mistake>
+  /** yyyy-mm-dd -> number of new mistakes introduced that day */
+  newIntroduced: Record<string, number>
+  /** yyyy-mm-dd -> positions trained that day */
+  activity?: Record<string, number>
 }

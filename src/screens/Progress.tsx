@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { PATTERNS } from '../lib/patterns'
-import { weaknessRanking } from '../lib/session'
-import { isRetired } from '../lib/srs'
+import { PATTERNS } from '../../core/patterns'
+import { weaknessRanking } from '../../core/session'
+import { isRetired } from '../../core/srs'
 import { useStore } from '../lib/store'
 
 function average(values: number[]) {

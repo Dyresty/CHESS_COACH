@@ -1,9 +1,9 @@
 import { Chess } from 'chess.js'
 import { useState } from 'react'
-import { ChessComError } from '../lib/chesscom'
+import { ChessComError } from '../../core/chesscom'
 import { analyseAndSave, importFromChessCom, type ImportProgress } from '../lib/importer'
 import { useStore } from '../lib/store'
-import type { Color } from '../lib/types'
+import type { Color } from '../../core/types'
 
 export function Importer({ compact }: { compact?: boolean }) {
   const username = useStore((s) => s.settings.username)

@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { Importer } from '../components/Importer'
-import { PATTERNS } from '../lib/patterns'
-import { buildSession, weaknessRanking } from '../lib/session'
+import { PATTERNS } from '../../core/patterns'
+import { buildSession, weaknessRanking } from '../../core/session'
 import { useStore } from '../lib/store'
-import type { Mistake } from '../lib/types'
+import type { Mistake } from '../../core/types'
 
 export function Today({ onStart, onSetup }: { onStart: (queue: Mistake[]) => void; onSetup: () => void }) {
   const state = useStore((s) => s)

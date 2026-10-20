@@ -1,8 +1,8 @@
-import { analyseGame } from './analyse'
-import { fetchRecentGames } from './chesscom'
+import { analyseGame } from '../../core/analyse'
+import { fetchRecentGames } from '../../core/chesscom'
 import { getEngine } from './engine'
 import { getState, setState } from './store'
-import type { ImportedGame } from './types'
+import type { ImportedGame } from '../../core/types'
 
 export interface ImportProgress {
   game: number

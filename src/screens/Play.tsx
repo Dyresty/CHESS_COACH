@@ -4,7 +4,7 @@ import { Board } from '../components/Board'
 import { SafetyCheck } from '../components/SafetyCheck'
 import { getEngine } from '../lib/engine'
 import { useStore } from '../lib/store'
-import type { Color } from '../lib/types'
+import type { Color } from '../../core/types'
 
 export type BotLevel = 'beginner' | 'casual' | 'strong'
 

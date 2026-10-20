@@ -1,11 +1,14 @@
 import { Chess } from 'chess.js'
 import { createEmptyCard } from 'ts-fsrs'
 import { tagMistake, uciToMove } from './patterns'
-import type { EvalResult, Evaluator, GameSummary, ImportedGame, Mistake, PatternTag } from './types'
+import type { EvalResult, Evaluator, GameSummary, ImportedGame, Mistake, PatternTag, SafetyItem } from './types'
 import { negate, winChance } from './winprob'
 
 export const MISTAKE_DROP = 0.12
 export const BLUNDER_DROP = 0.2
+/** A move this close to the engine's best counts as a good move. */
+const GOOD_DROP = 0.03
+const SAFE_MOVES_PER_GAME = 4
 
 export interface AnalysisResult {
   summary: GameSummary
@@ -50,6 +53,13 @@ export async function analyseGame(
   }
 
   const mistakes: Mistake[] = []
+  const goodMoves: SafetyItem[] = []
+  const firstIsUser = fens[0]?.split(' ')[1] === game.userColor
+  const curve = evals.map((e, i) => {
+    // evals[i] is from the side to move at ply i; convert to the user's view.
+    const userToMove = (i % 2 === 0) === firstIsUser
+    return Math.round(winChance(userToMove ? e.score : negate(e.score)) * 100)
+  })
   const tags: Partial<Record<PatternTag, number>> = {}
   let userMoves = 0
   let blunders = 0
@@ -61,8 +71,11 @@ export async function analyseGame(
     const before = evals[i]
     const after = evals[i + 1]
     const playedUci = move.lan
-    if (before.bestmove === playedUci) return
-    const drop = winChance(before.score) - winChance(negate(after.score))
+    const drop = before.bestmove === playedUci ? 0 : winChance(before.score) - winChance(negate(after.score))
+    // Good piece moves (not pawn pushes, not captures) are the interesting "safe" examples.
+    if (drop < GOOD_DROP && move.piece !== 'p' && !move.captured && i > 6) {
+      goodMoves.push({ fen: move.before, uci: playedUci, san: move.san, moveNumber: Math.floor(i / 2) + 1 })
+    }
     if (drop < MISTAKE_DROP) return
 
     const severity = drop >= BLUNDER_DROP ? 'blunder' : 'mistake'
@@ -97,6 +110,9 @@ export async function analyseGame(
     summary: {
       id: game.id,
       url: game.url,
+      pgn: game.pgn,
+      curve,
+      safeMoves: spread(goodMoves, SAFE_MOVES_PER_GAME),
       endTime: game.endTime,
       opponent: game.opponent,
       result: game.result,
@@ -109,4 +125,10 @@ export async function analyseGame(
     },
     mistakes,
   }
+}
+
+/** Up to `n` items spread evenly through the list. */
+function spread<T>(list: T[], n: number): T[] {
+  if (list.length <= n) return list
+  return Array.from({ length: n }, (_, i) => list[Math.floor((i * list.length) / n)])
 }

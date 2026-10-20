@@ -2,7 +2,7 @@ import { Chess, type Square } from 'chess.js'
 import { useMemo, useState, type CSSProperties } from 'react'
 import { Chessboard } from 'react-chessboard'
 import type { Arrow } from 'react-chessboard'
-import type { Color } from '../lib/types'
+import type { Color } from '../../core/types'
 
 interface Props {
   fen: string

@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module'
-import { SearchParser } from '../src/lib/uci'
-import type { EvalResult, Evaluator } from '../src/lib/types'
+import { SearchParser } from '../core/uci'
+import type { EvalResult, Evaluator } from '../core/types'
 
 const require = createRequire(import.meta.url)
 

@@ -1,6 +1,6 @@
 # Chess Coach
 
-A phone-first web app that helps you get better at chess by training on **your own mistakes**.
+An Android app (Expo / React Native, in `mobile/`) and a web app that help you get better at chess by training on **your own mistakes**.
 
 Lessons teach chess in general. Your rating drops because of the same few mistakes you make again and again.
 Chess Coach imports your chess.com games, finds the moves that cost you, and drills them with spaced repetition
@@ -22,8 +22,29 @@ Everything runs on your device. Games and progress are stored in the browser's l
 
 ## Install on your phone
 
-Open the deployed site in your phone's browser, then use **Add to Home Screen** (Safari share menu on iPhone,
-the menu on Chrome for Android). It opens full screen like a normal app and works offline after the first load.
+**Android:** download [chess-coach.apk](https://github.com/Dyresty/CHESS_COACH/releases/latest/download/chess-coach.apk)
+on your phone and open it (allow installs from your browser when asked). Every push to `main` that touches the app
+builds a new APK in GitHub Actions and publishes it as the latest release; new versions install over old ones and keep your data.
+
+**Web:** open the deployed site and use **Add to Home Screen**.
+
+No AI service is involved. Analysis is done by Stockfish, a chess engine that runs on the device, offline.
+
+## Mobile app (`mobile/`)
+
+Expo SDK 58 with Expo Router. Stockfish runs in a hidden WebView (`src/engine/`), fed by an HTML page with the
+WebAssembly engine inlined (`scripts/build-engine.mjs`, run on install). Screens live in `src/app/`, the design
+rules in [`mobile/DESIGN.md`](mobile/DESIGN.md). Chess logic shared with the web app lives in `core/`.
+
+```bash
+cd mobile
+npm install
+npx expo start          # needs a development build because of the WebView engine
+npx expo export -p web  # the same app as a website, handy for checking screens
+```
+
+Extra in the app: **Safe or not?** (judge real moves from your games as safe or unsafe), **game replay** with every
+mistake marked on the moves and on a winning-chances graph, a training streak, and dark mode.
 
 ## Development
 
@@ -36,10 +57,10 @@ npm run build
 
 Code layout:
 
-- `src/lib/analyse.ts` turns a PGN into mistakes using engine evaluations and lichess-style winning chances.
-- `src/lib/patterns.ts` names the cause of each mistake from the engine's lines.
+- `core/analyse.ts` turns a PGN into mistakes using engine evaluations and lichess-style winning chances.
+- `core/patterns.ts` names the cause of each mistake from the engine's lines.
 - `src/lib/engine.ts` wraps Stockfish in a Web Worker; `test/nodeEngine.ts` runs the same build in Node for tests.
-- `src/lib/srs.ts` and `src/lib/session.ts` schedule drills and build the daily session.
+- `core/srs.ts` and `core/session.ts` schedule drills and build the daily session.
 - `src/screens/` holds the Today, Drill, Play, Mistakes, Progress and Settings screens.
 
 Pushes to `main` run lint, tests and build, then deploy to GitHub Pages.
